@@ -1,0 +1,22 @@
+name: Simple CI
+
+on: push
+jobs:
+  build:
+    strategy:
+      matrix:
+        ghc: ["9.4.4"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Select GHC, update cabal
+        run: |
+          ghcup install ghc --set ${{ matrix.ghc }}
+          ghc --version
+          cabal --version
+          cabal update
+      - uses: actions/checkout@v3
+      - name: Build All
+        run: |
+          cabal build all
+          cabal test all
